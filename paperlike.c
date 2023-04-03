@@ -20,6 +20,22 @@ typedef struct SignalData {
   union _SignalDataType {
     unsigned char value;
 
+    struct _Beat {
+      unsigned char uBeatSign : 1;
+      unsigned char uBeatSignOff : 1;
+      unsigned char Reserved : 6;
+    } Beat;
+
+    struct _ScreenSaver {
+      unsigned char ucScreenSaver : 1;
+      unsigned char Reserved : 7;
+    } ScreenSaver;
+
+    struct _TurnOffMonitor {
+      unsigned char ucTurnOffMonitor : 1;
+      unsigned char Reserved : 7;
+    } TurnOffMonitor;
+
     struct _CleanMonitor {
       unsigned char uCleanMonitorSoft : 1;
       unsigned char uCleanMonitorHard : 1;
@@ -133,8 +149,77 @@ int sendClean(int framebuffer) {
   return sendDDCWrite(framebuffer, SD.SignalDataTypeHead.value, SD.SignalDataType.value);
 }
 
+int sendOff(int framebuffer) {
+  if (VERBOSE) printf("--- sendOff\n");
+
+  SignalData SD;
+  memset((void *)&SD, 0, sizeof(SignalData));
+
+  SD.SignalDataTypeHead.Head.uSignalDataType = 3; // DS_PACKET_TYPE_TURNOFFMONITOR;
+  SD.SignalDataType.TurnOffMonitor.ucTurnOffMonitor = 1;
+
+  if (VERBOSE) printf("Dasung SignalData (2): %02x %02x\n", SD.SignalDataTypeHead.value, SD.SignalDataType.value);
+
+  return sendDDCWrite(framebuffer, SD.SignalDataTypeHead.value, SD.SignalDataType.value);
+}
+
+int sendScreenSaver(int framebuffer) {
+  if (VERBOSE) printf("--- sendScreenSaver\n");
+
+  SignalData SD;
+  memset((void *)&SD, 0, sizeof(SignalData));
+
+  SD.SignalDataTypeHead.Head.uSignalDataType = 2; // DS_PACKET_TYPE_SCREENSAVER;
+  SD.SignalDataType.ScreenSaver.ucScreenSaver = 1;
+
+  if (VERBOSE) printf("Dasung SignalData (2): %02x %02x\n", SD.SignalDataTypeHead.value, SD.SignalDataType.value);
+
+  return sendDDCWrite(framebuffer, SD.SignalDataTypeHead.value, SD.SignalDataType.value);
+}
+
+int sendScreenSaverOff(int framebuffer) {
+  if (VERBOSE) printf("--- sendScreenSaverOff\n");
+
+  SignalData SD;
+  memset((void *)&SD, 0, sizeof(SignalData));
+
+  SD.SignalDataTypeHead.Head.uSignalDataType = 2; // DS_PACKET_TYPE_SCREENSAVER;
+  SD.SignalDataType.ScreenSaver.ucScreenSaver = 0;
+
+  if (VERBOSE) printf("Dasung SignalData (2): %02x %02x\n", SD.SignalDataTypeHead.value, SD.SignalDataType.value);
+
+  return sendDDCWrite(framebuffer, SD.SignalDataTypeHead.value, SD.SignalDataType.value);
+}
+
+int sendBeat(int framebuffer) {
+  if (VERBOSE) printf("--- sendBeat\n");
+
+  SignalData SD;
+  memset((void *)&SD, 0, sizeof(SignalData));
+
+  SD.SignalDataTypeHead.Head.uSignalDataType = 1; // DS_PACKET_TYPE_BEAT;
+  SD.SignalDataType.Beat.uBeatSign = 1;
+  SD.SignalDataType.Beat.uBeatSignOff = 0;
+
+  if (VERBOSE) printf("Dasung SignalData (2): %02x %02x\n", SD.SignalDataTypeHead.value, SD.SignalDataType.value);
+
+  return sendDDCWrite(framebuffer, SD.SignalDataTypeHead.value, SD.SignalDataType.value);
+}
+
 int main(int argc, char *argv[]) {
-  if (argc == 2 && strcmp("clean", argv[1]) == 0) {
+  if (argc == 2 && strcmp("beat", argv[1]) == 0) {
+    int framebuffer = getDSFramebuffer();
+    if (framebuffer) sendBeat(framebuffer);
+  } else if (argc == 2 && strcmp("screensaver", argv[1]) == 0) {
+    int framebuffer = getDSFramebuffer();
+    if (framebuffer) sendScreenSaver(framebuffer);
+  } else if (argc == 2 && strcmp("screensaveroff", argv[1]) == 0) {
+    int framebuffer = getDSFramebuffer();
+    if (framebuffer) sendScreenSaverOff(framebuffer);
+  } else if (argc == 2 && strcmp("off", argv[1]) == 0) {
+    int framebuffer = getDSFramebuffer();
+    if (framebuffer) sendOff(framebuffer);
+  } else if (argc == 2 && strcmp("clean", argv[1]) == 0) {
     int framebuffer = getDSFramebuffer();
     if (framebuffer) sendClean(framebuffer);
   } else {
