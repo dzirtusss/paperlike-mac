@@ -1,0 +1,28 @@
+lunar ddc PaperlikeHD 0x08 ...
+
+0x01.. Heartbeat
+
+0x0201 Screensaver on
+0x0202 Screensaver off
+
+0x0301 Power Off
+
+0x04... resolution
+
+0x05... threshold
+
+0x0601 Clean soft
+0x0602 Clean hard
+
+0x0701-0x0703 M1-M3
+
+0x0801-0x0808 contrast (threshhold floyd)
+
+0x09.. threshold A2
+0x0A.. threshold low A2
+0x0B.. thresholh low a5
+
+0x0C01-0x0C05 Fast->Black
+
+0x0E.. white light
+0x0F.. yellow light
