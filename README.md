@@ -3,6 +3,11 @@
 Alternative MacOS implementation of software monitor controls for **Dasung Paperlike HD**
 great eInk monitor.
 
+> NOTE: I am not using this anymore as C binding, as have switched to https://github.com/alin23/Lunar. It has
+> a CLI, which is able to send DDCCI commands w/o any hassle as well on M1 HDMI port. Dasung codes can be picked
+> from this repo. E.g.: `lunar ddc PaperlikeHD 0x08 0x0603` to send clear
+
+
 To compile:
 ```
 git clone https://github.com/dzirtusss/paperlike-mac
